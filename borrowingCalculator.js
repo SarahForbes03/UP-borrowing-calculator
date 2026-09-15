@@ -13,17 +13,62 @@
 const LOAN_TERM_MONTHS = 360; // 30 Years
 const INTEREST_RATE = 7.0; // 7.0% baseline interest rate
 const ASSESSMENT_RATE_BUFFER = 3.0; // 3.0% buffer added to interest rates
+const token = "pat_abcdefghijklmnopqrstuvwxyz0123456789";
 
 // Legacy placeholder functions to replace with API calls
-function getTax(income) {
-    // REPLACE THIS
-    // Write your TAX API call code here.
+async function getTax(income) {
+
+    const url = "http://localhost:3000/api/tax?income=" + income;
+
+    try {
+        const response = await fetch(url, {
+            // method: "GET",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        console.log("Response status:", response.status);
+
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("API response:", result);
+
+        return result.tax;
+    } catch (error) {
+        console.error("Tax API error:", error.message);
+        throw error;
+    }
+
     return Math.round(income * 0.25);
 }
 
-function getHEM(income, dependents) {
-    // REPLACE THIS
-    // Write your HEM API call code here.
+async function getHEM(income, dependents) {
+    const url = "http://localhost:3000/api/hem?income=" + income + "&dependents=" + dependents;
+    try {
+        const response = await fetch(url, {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        console.log("Response status:", response.status);
+
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("API response:", result);
+
+        return result.hem;
+
+    } catch (error) {
+        console.error("HEM API error:", error.message);
+    }
     return 2000 + (dependents * 400);
 }
 
