@@ -21,15 +21,7 @@ describe('Term Deposit Calculator Tests', () => {
     assert.strictEqual(result.monthlyRepayment, 0);
   });*/
 
-  it('should calculate tax', async () => {
-    const income = 120000;
-    const tax = await getTax(income);
-
-    assert.strictEqual(income, 120000);
-    assert.strictEqual(tax, 24000);
-  });
-
-  it('should return the status 200 from API', async () => {
+  it('should return the correct income and tax from the API', async () => {
     const income = 120000;
     const token = "pat_abcdefghijklmnopqrstuvwxyz0123456789";
     const url = "http://localhost:3000/api/tax?income=" + income;
@@ -37,9 +29,14 @@ describe('Term Deposit Calculator Tests', () => {
       headers: {
         "Authorization": "Bearer " + token
       }
-        });
+    });
 
     assert.strictEqual(response.status, 200);
+
+    const result = await response.json();
+
+    assert.strictEqual(result.income, 120000);
+    assert.strictEqual(result.tax, 24000);
   });
 
 
