@@ -6,6 +6,7 @@
 const assert = require('assert'); 
 const {calculateBorrowingPower} = require('./borrowingCalculator');
 const {getTax} = require('./borrowingCalculator');
+const {getHEM} = require('./borrowingCalculator');
 
 describe('Term Deposit Calculator Tests', () => {
 
@@ -31,12 +32,29 @@ describe('Term Deposit Calculator Tests', () => {
       }
     });
 
-    assert.strictEqual(response.status, 200);
+    assert.strictEqual(response.status, 200,'Should be status 200');
 
     const result = await response.json();
 
-    assert.strictEqual(result.income, 120000);
-    assert.strictEqual(result.tax, 24000);
+    assert.strictEqual(result.income, 120000,'Income should be 120000');
+    assert.strictEqual(result.tax, 24000,'Tax should be 24000');
+  });
+
+  it('should return the correct income and dependents from API', async()=>{
+    const income = 120000;
+    const dependents = 2;
+    const token = "pat_abcdefghijklmnopqrstuvwxyz0123456789";
+    const url = "http://localhost:3000/api/hem?income=" + income + "&dependents=" + dependents;
+    const response = await fetch(url, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    const result = await response.json();
+    assert.strictEqual(result.income, 120000,'Income should be 120000');
+    assert.strictEqual(result.dependents, 2,'Dependents should be 2');
+    assert.strictEqual(result.hem, 3100,'Hem should be 3100');
   });
 
 
