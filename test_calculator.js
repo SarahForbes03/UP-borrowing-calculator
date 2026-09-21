@@ -29,5 +29,19 @@ describe('Term Deposit Calculator Tests', () => {
     assert.strictEqual(tax, 24000);
   });
 
+  it('should return the status 200 from API', async () => {
+    const income = 120000;
+    const token = "pat_abcdefghijklmnopqrstuvwxyz0123456789";
+    const url = "http://localhost:3000/api/tax?income=" + income;
+    const response = await fetch(url, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+        });
+
+    assert.strictEqual(response.status, 200);
+  });
+
+
 });
 
