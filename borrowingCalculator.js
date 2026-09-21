@@ -28,22 +28,24 @@ async function getTax(income) {
             }
         });
 
-        console.log("Response status:", response.status);
+        console.log("Tax Response status:", response.status);
 
         if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
+            throw new Error(`Tax error Response status: ${response.status}`);
         }
 
         const result = await response.json();
-        console.log("API response:", result);
+        console.log("Tax API response:", result);
+
+        console.log("Income:", result.income);
+        console.log("Tax:", result.tax);
 
         return result.tax;
+
     } catch (error) {
         console.error("Tax API error:", error.message);
         throw error;
     }
-
-    return Math.round(income * 0.25);
 }
 
 async function getHEM(income, dependents) {
@@ -55,21 +57,20 @@ async function getHEM(income, dependents) {
             }
         });
 
-        console.log("Response status:", response.status);
+        console.log("HEM Response status:", response.status);
 
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
 
         const result = await response.json();
-        console.log("API response:", result);
+        console.log("HEM API response:", result);
 
         return result.hem;
 
     } catch (error) {
         console.error("HEM API error:", error.message);
     }
-    return 2000 + (dependents * 400);
 }
 
 /**
@@ -147,3 +148,4 @@ if (require.main === module) {
 }
 
 module.exports = { calculateBorrowingPower };
+module.exports = { getTax };
