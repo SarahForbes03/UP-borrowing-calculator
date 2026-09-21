@@ -22,23 +22,19 @@ async function getTax(income) {
 
     try {
         const response = await fetch(url, {
-            // method: "GET",
             headers: {
                 "Authorization": "Bearer " + token
             }
         });
 
-        console.log("Tax Response status:", response.status);
+        console.log("Tax Response status:", response.status + " " + response.statusText);
 
         if (!response.ok) {
-            throw new Error(`Tax error Response status: ${response.status}`);
+            throw new Error(`Tax error Response status: ${response.status + " " + response.statusText}`);
         }
 
         const result = await response.json();
         console.log("Tax API response:", result);
-
-        console.log("Income:", result.income);
-        console.log("Tax:", result.tax);
 
         return result.tax;
 
@@ -57,10 +53,10 @@ async function getHEM(income, dependents) {
             }
         });
 
-        console.log("HEM Response status:", response.status);
+        console.log("HEM Response status:", response.status + " " + response.statusText);
 
         if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
+            throw new Error(`Response status: ${response.status + " " + response.statusText}`);
         }
 
         const result = await response.json();
@@ -149,3 +145,4 @@ if (require.main === module) {
 
 module.exports = { calculateBorrowingPower };
 module.exports = { getTax };
+module.exports = { getHEM };

@@ -57,6 +57,58 @@ describe('Term Deposit Calculator Tests', () => {
     assert.strictEqual(result.hem, 3100,'Hem should be 3100');
   });
 
+  it('should return status 400', async () => {
+    const token = "pat_abcdefghijklmnopqrstuvwxyz0123456789";
+    const url = "http://localhost:3000/api/tax?income=";
+    const response = await fetch(url, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    assert.strictEqual(response.status, 400,'Should be status 400');
+  });
+
+  it('should return status 401', async () => {
+    const income = 120000;
+    const token = "pat_abcdefghijklmnopqrstuvwxyz01234567891";
+    const url = "http://localhost:3000/api/tax?income=" + income;
+    const response = await fetch(url, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    assert.strictEqual(response.status, 401,'Should be status 401');
+  });
+
+  it('should return status 404', async () => {
+    const income = 120000;
+    const token = "pat_abcdefghijklmnopqrstuvwxyz0123456789";
+    const url = "http://localhost:3000/tax";
+    const response = await fetch(url, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    assert.strictEqual(response.status, 404,'Should be status 404');
+  });
+
+  it('should return status 405', async () => {
+    const income = 120000;
+    const token = "pat_abcdefghijklmnopqrstuvwxyz0123456789";
+    const url = "http://localhost:3000/tax";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    assert.strictEqual(response.status, 405,'Should be status 405');
+  });
+
 
 });
 
