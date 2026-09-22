@@ -7,6 +7,7 @@ const assert = require('assert');
 const {calculateBorrowingPower} = require('./borrowingCalculator');
 const {getTax} = require('./borrowingCalculator');
 const {getHEM} = require('./borrowingCalculator');
+const url = process.env.API_URL;
 
 describe('Term Deposit Calculator Tests', () => {
 
@@ -24,15 +25,14 @@ describe('Term Deposit Calculator Tests', () => {
 
   it('should return the correct income and tax from the API', async () => {
     const income = 120000;
-    const token = "pat_abcdefghijklmnopqrstuvwxyz0123456789";
-    const url = "http://localhost:3000/api/tax?income=" + income;
-    const response = await fetch(url, {
+    const response = await fetch(url+"tax?income=" + income, {
       headers: {
-        "Authorization": "Bearer " + token
+        "Authorization": "Bearer " + process.env.BEARER_TOKEN
       }
     });
 
     assert.strictEqual(response.status, 200,'Should be status 200');
+    assert.strictEqual(response.statusText, "OK",'Should say OK');
 
     const result = await response.json();
 
@@ -43,11 +43,9 @@ describe('Term Deposit Calculator Tests', () => {
   it('should return the correct income and dependents from API', async()=>{
     const income = 120000;
     const dependents = 2;
-    const token = "pat_abcdefghijklmnopqrstuvwxyz0123456789";
-    const url = "http://localhost:3000/api/hem?income=" + income + "&dependents=" + dependents;
-    const response = await fetch(url, {
+    const response = await fetch(url + "hem?income=" + income + "&dependents=" + dependents, {
       headers: {
-        "Authorization": "Bearer " + token
+        "Authorization": "Bearer " + process.env.BEARER_TOKEN
       }
     });
 
@@ -58,55 +56,48 @@ describe('Term Deposit Calculator Tests', () => {
   });
 
   it('should return status 400', async () => {
-    const token = "pat_abcdefghijklmnopqrstuvwxyz0123456789";
-    const url = "http://localhost:3000/api/tax?income=";
-    const response = await fetch(url, {
+    const response = await fetch(url+"tax?income=",{
       headers: {
-        "Authorization": "Bearer " + token
+        "Authorization": "Bearer " + process.env.BEARER_TOKEN
       }
     });
 
     assert.strictEqual(response.status, 400,'Should be status 400');
+    assert.strictEqual(response.statusText, "Bad Request",'Should say Bad Request');
   });
 
   it('should return status 401', async () => {
-    const income = 120000;
-    const token = "pat_abcdefghijklmnopqrstuvwxyz01234567891";
-    const url = "http://localhost:3000/api/tax?income=" + income;
-    const response = await fetch(url, {
+    const response = await fetch(url+"tax?income=",{
       headers: {
-        "Authorization": "Bearer " + token
+        "Authorization": "Bearer " + process.env.BEARER_TOKEN+1
       }
     });
 
     assert.strictEqual(response.status, 401,'Should be status 401');
+    assert.strictEqual(response.statusText, "Unauthorized",'Unauthorized');
   });
 
   it('should return status 404', async () => {
-    const income = 120000;
-    const token = "pat_abcdefghijklmnopqrstuvwxyz0123456789";
-    const url = "http://localhost:3000/tax";
-    const response = await fetch(url, {
+    const response = await fetch(url+"tax1", {
       headers: {
-        "Authorization": "Bearer " + token
+        "Authorization": "Bearer " + process.env.BEARER_TOKEN
       }
     });
 
     assert.strictEqual(response.status, 404,'Should be status 404');
+    assert.strictEqual(response.statusText, "Not Found",'Not Found');
   });
 
   it('should return status 405', async () => {
-    const income = 120000;
-    const token = "pat_abcdefghijklmnopqrstuvwxyz0123456789";
-    const url = "http://localhost:3000/tax";
-    const response = await fetch(url, {
+    const response = await fetch(url+"tax=", {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + token
+        "Authorization": "Bearer " + process.env.BEARER_TOKEN
       }
     });
 
     assert.strictEqual(response.status, 405,'Should be status 405');
+    assert.strictEqual(response.statusText, "Method Not Allowed",'Should say Method Not Allowed');
   });
 
 

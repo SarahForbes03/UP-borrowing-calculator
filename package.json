@@ -1,10 +1,13 @@
 {
   "devDependencies": {
-    "mocha": "^11.7.0"
+    "mocha": "^12.0.2"
   },
   "scripts": {
     "api": "node server.js",
-    "test": "mocha test_calculator.js",
+    "test": "mocha -r dotenv/config test_calculator.js",
     "start": "node borrowingCalculator.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.2"
   }
 }
