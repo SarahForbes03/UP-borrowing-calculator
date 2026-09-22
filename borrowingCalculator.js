@@ -18,6 +18,20 @@ const ASSESSMENT_RATE_BUFFER = 3.0; // 3.0% buffer added to interest rates
 
 // Legacy placeholder functions to replace with API calls
 async function getTax(income) {
+    // validate income
+    if (!Number.isFinite(income)) {
+        throw new TypeError("Income must be a valid number.");
+    }
+
+    // check income is positive
+    if (income <= 0){
+        throw new RangeError('Income must be greater than zero');
+    }
+
+    // check income is positive
+    if (income > 1000000000){
+        throw new RangeError('Income cannot be higher than 1,000,000,000');
+    }
 
     try {
         const response = await fetch(url+"tax?income=" + income, {
@@ -26,24 +40,50 @@ async function getTax(income) {
             }
         });
 
-        console.log("Tax Response status:", response.status + " " + response.statusText);
+            // console.log("Tax Response status:", response.status + " " + response.statusText);
 
+        // check http response status
         if (!response.ok) {
             throw new Error(`Tax error Response status: ${response.status + " " + response.statusText}`);
         }
 
         const result = await response.json();
-        console.log("Tax API response:", result);
+            // console.log("Tax API response:", result);
 
         return result.tax;
 
     } catch (error) {
-        console.error("Tax API error:", error.message);
+        console.error(error.name);
+        console.error(error.message);
         throw error;
     }
 }
 
 async function getHEM(income, dependents) {
+    // validate income
+    if (!Number.isFinite(income)) {
+        throw new TypeError("Income must be a valid number.");
+    }
+
+    // check income is positive
+    if (income <= 0){
+        throw new RangeError('Income must be greater than zero');
+    }
+
+    // validate dependents
+    if (!Number.isFinite(dependents)) {
+        throw new TypeError("Dependents must be a valid number.");
+    }
+
+    // check dependents is not negative
+    if (dependents < 0){
+        throw new RangeError('Dependents cannot be negative');
+    }
+
+    if (dependents > 3){
+        throw new RangeError('Dependents cannot be more than 3');
+    }
+
     try {
         const response = await fetch(url + "hem?income=" + income + "&dependents=" + dependents, {
             headers: {
@@ -51,19 +91,21 @@ async function getHEM(income, dependents) {
             }
         });
 
-        console.log("HEM Response status:", response.status + " " + response.statusText);
+            // console.log("HEM Response status:", response.status + " " + response.statusText);
 
+        // check http response status
         if (!response.ok) {
             throw new Error(`Response status: ${response.status + " " + response.statusText}`);
         }
 
         const result = await response.json();
-        console.log("HEM API response:", result);
+            // console.log("HEM API response:", result);
 
         return result.hem;
 
     } catch (error) {
-        console.error("HEM API error:", error.message);
+        console.error(error.name);
+        console.error(error.message);
     }
 }
 
@@ -141,6 +183,8 @@ if (require.main === module) {
     runConsoleMode();
 }
 
-module.exports = { calculateBorrowingPower };
-module.exports = { getTax };
-module.exports = { getHEM };
+module.exports = {
+    calculateBorrowingPower,
+    getTax,
+    getHEM
+};
