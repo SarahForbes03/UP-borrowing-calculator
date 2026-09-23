@@ -15,8 +15,8 @@ describe('Term Deposit Calculator Tests', () => {
 **  getTax function tests
 **/
 
-    it('should return the correct income and tax from the API', async () => {
-        const income = 120000;
+    it('should return the correct income and tax from the API where income > 100000, < 50000', async () => {
+        const income = 180000;
         const response = await fetch(`${url}tax?income=${income}`, {
             headers: {
                 "Authorization": "Bearer " + process.env.BEARER_TOKEN
@@ -25,8 +25,36 @@ describe('Term Deposit Calculator Tests', () => {
 
         const result = await response.json();
 
-        assert.strictEqual(result.income, 120000, 'Income should be 120000');
-        assert.strictEqual(result.tax, 24000, 'Tax should be 24000');
+        assert.strictEqual(result.income, 180000, 'Income should be 180000');
+        assert.strictEqual(result.tax, 45000, 'Tax should be 45000');
+    });
+
+    it('should return the correct income and tax from the API where income > 50000, < 20000', async () => {
+        const income = 55000;
+        const response = await fetch(`${url}tax?income=${income}`, {
+            headers: {
+                "Authorization": "Bearer " + process.env.BEARER_TOKEN
+            }
+        });
+
+        const result = await response.json();
+
+        assert.strictEqual(result.income, 55000, 'Income should be 55000');
+        assert.strictEqual(result.tax, 5750, 'Tax should be 5750');
+    });
+
+    it('should return the correct income and tax from the API where income > 20000, > 0', async () => {
+        const income = 24000;
+        const response = await fetch(`${url}tax?income=${income}`, {
+            headers: {
+                "Authorization": "Bearer " + process.env.BEARER_TOKEN
+            }
+        });
+
+        const result = await response.json();
+
+        assert.strictEqual(result.income, 24000, 'Income should be 24000');
+        assert.strictEqual(result.tax, 600, 'Tax should be 600');
     });
 
     it("should reject blank inputs", async function () {
@@ -106,8 +134,8 @@ describe('Term Deposit Calculator Tests', () => {
 **/
 
     it('should return the correct income and dependents from API', async () => {
-        const income = 120000;
-        const dependents = 2;
+        const income = 100000;
+        const dependents = 1;
         const response = await fetch(`${url}hem?income=${income}&dependents=${dependents}`, {
             headers: {
                 "Authorization": "Bearer " + process.env.BEARER_TOKEN
@@ -116,9 +144,9 @@ describe('Term Deposit Calculator Tests', () => {
 
         const result = await response.json();
 
-        assert.strictEqual(result.income, 120000, 'Income should be 120000');
-        assert.strictEqual(result.dependents, 2, 'Dependents should be 2');
-        assert.strictEqual(result.hem, 3100, 'Hem should be 3100');
+        assert.strictEqual(result.income, 100000, 'Income should be 100000');
+        assert.strictEqual(result.dependents, 1, 'Dependents should be 1');
+        assert.strictEqual(result.hem, 2700, 'Hem should be 2700');
     });
 
     it("should reject blank inputs", async function () {
@@ -193,12 +221,12 @@ describe('Term Deposit Calculator Tests', () => {
     });
 
     it('should calculate the max loan amount and borrowing power when HEM > income', async () => {
-        const result = await calculateBorrowingPower(61000, 2, 3000, 10000, 10);
-        assert.strictEqual(result.maxLoanAmount, 50791.38, 'Max loan amount should be 50791.38');
-        assert.strictEqual(result.monthlyRepayment, 1079.17, 'Max monthly repayment should be 1079.17');
+        const result = await calculateBorrowingPower(61000, 1, 3000, 10000, 10);
+        assert.strictEqual(result.maxLoanAmount, 55497.91, 'Max loan amount should be 55497.91');
+        assert.strictEqual(result.monthlyRepayment, 1179.17, 'Max monthly repayment should be 1179.17');
     });
 
-    it('should return 0 for invalid negative inputs', async () => {
+    it('should return 0 when user cannot afford loan', async () => {
         const result = await calculateBorrowingPower(30000, 3, 4000, 5000, 10);
         assert.strictEqual(result.maxLoanAmount, 0);
         assert.strictEqual(result.monthlyRepayment, 0);
