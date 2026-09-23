@@ -11,8 +11,9 @@
 require('dotenv').config();
 const url = process.env.API_URL;
 
-// Global constant for mortgage simulation
-const LOAN_TERM_MONTHS = 360; // 30 Years
+// Global constant for loan simulation
+// const LOAN_TERM_MONTHS = 360; // 30 Years
+const LOAN_TERM_MONTHS = 60; // 5 Years
 const INTEREST_RATE = 7.0; // 7.0% baseline interest rate
 const ASSESSMENT_RATE_BUFFER = 3.0; // 3.0% buffer added to interest rates
 
@@ -106,6 +107,7 @@ async function getHEM(income, dependents) {
     } catch (error) {
         console.error(error.name);
         console.error(error.message);
+        throw error;
     }
 }
 
@@ -113,6 +115,13 @@ async function getHEM(income, dependents) {
  * Calculates the total borrowing power amount and the monthly repayment configuration
  */
 async function calculateBorrowingPower(income, dependents, expenses, creditLimits, annualAssessmentRate) {
+    if (!Number.isFinite(income)) throw new TypeError("Income must be a valid number.");
+    if (!Number.isFinite(dependents)) throw new TypeError("Dependents must be a valid number.");
+    if (!Number.isFinite(expenses)) throw new TypeError("Monthly expenses must be a valid number.");
+    if (expenses < 0){ throw new RangeError('Monthly expenses cannot be negative');}
+    if (!Number.isFinite(creditLimits)) throw new TypeError("Credit Card Limits must be a valid number.");
+    if (creditLimits < 0){ throw new RangeError('Credit Card Limits cannot be negative');}
+
     // 1. Calculate Net Monthly Income after tax deductions
     const annualTax = await getTax(income);
     const netMonthlyIncome = (income - annualTax) / 12;
@@ -149,7 +158,7 @@ async function runConsoleMode() {
     const readline = require('readline');
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
-    console.log("Mortgage Borrowing Power Calculator");
+    console.log("Loan Borrowing Power Calculator");
     console.log("===================================");
 
     rl.question("Gross Annual Income: $", async (income) => {
@@ -170,7 +179,7 @@ async function runConsoleMode() {
 
                     console.log("\n--- Calculation Summary ---");
                     console.log(`Maximum Borrowing Power at ${INTEREST_RATE}%: $${result.maxLoanAmount.toLocaleString()}`);
-                    console.log(`Assumed Monthly Mortgage Repayment: $${result.monthlyRepayment.toLocaleString()} over 30 years`);
+                    console.log(`Assumed Monthly Loan Repayment: $${result.monthlyRepayment.toLocaleString()} over 5 years`);
                     
                     rl.close();
                 });
