@@ -34,7 +34,7 @@ async function getTax(income) {
     }
 
     try {
-        const response = await fetch(url+"tax?income=" + income, {
+        const response = await fetch(`${url}tax?income=${income}`, {
             headers: {
                 "Authorization": "Bearer " + process.env.BEARER_TOKEN
             }
@@ -85,7 +85,7 @@ async function getHEM(income, dependents) {
     }
 
     try {
-        const response = await fetch(url + "hem?income=" + income + "&dependents=" + dependents, {
+        const response = await fetch(`${url}hem?income=${income}&dependents=${dependents}`, {
             headers: {
                 "Authorization": "Bearer " + process.env.BEARER_TOKEN
             }

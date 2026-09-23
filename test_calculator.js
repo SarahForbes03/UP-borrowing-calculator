@@ -31,7 +31,7 @@ describe('Term Deposit Calculator Tests', () => {
 
   it('should return the correct income and tax from the API', async () => {
     const income = 120000;
-    const response = await fetch(url+"tax?income=" + income, {
+    const response = await fetch(`${url}tax?income=${income}`,{
       headers: {
         "Authorization": "Bearer " + process.env.BEARER_TOKEN
       }
@@ -77,7 +77,7 @@ describe('Term Deposit Calculator Tests', () => {
 
   it("should reject a string", async function () {
     await assert.rejects(
-        getTax("50000"),
+        getTax("100000"),
         {
           name: "TypeError",
           message: "Income must be a valid number."
@@ -122,7 +122,7 @@ describe('Term Deposit Calculator Tests', () => {
   it('should return the correct income and dependents from API', async()=>{
     const income = 120000;
     const dependents = 2;
-    const response = await fetch(url + "hem?income=" + income + "&dependents=" + dependents, {
+    const response = await fetch(`${url}hem?income=${income}&dependents=${dependents}`, {
       headers: {
         "Authorization": "Bearer " + process.env.BEARER_TOKEN
       }
@@ -192,7 +192,7 @@ describe('Term Deposit Calculator Tests', () => {
  */
 
   it('should return status 200', async () => {
-    const response = await fetch(url+"tax?income=" + 120000, {
+    const response = await fetch(`${url}tax?income=2000`, {
       headers: {
         "Authorization": "Bearer " + process.env.BEARER_TOKEN
       }
@@ -203,7 +203,7 @@ describe('Term Deposit Calculator Tests', () => {
   });
 
   it('should return status 400', async () => {
-    const response = await fetch(url+"tax?income=",{
+    const response = await fetch(`${url}tax?income=`,{
       headers: {
         "Authorization": "Bearer " + process.env.BEARER_TOKEN
       }
@@ -214,7 +214,7 @@ describe('Term Deposit Calculator Tests', () => {
   });
 
   it('should return status 401', async () => {
-    const response = await fetch(url+"tax?income=",{
+    const response = await fetch(`${url}tax?income=100000`,{
       headers: {
         "Authorization": "Bearer " + process.env.BEARER_TOKEN+1
       }
@@ -225,7 +225,7 @@ describe('Term Deposit Calculator Tests', () => {
   });
 
   it('should return status 404', async () => {
-    const response = await fetch(url+"tax1", {
+    const response = await fetch(`${url}tax=1`, {
       headers: {
         "Authorization": "Bearer " + process.env.BEARER_TOKEN
       }
@@ -236,7 +236,7 @@ describe('Term Deposit Calculator Tests', () => {
   });
 
   it('should return status 405', async () => {
-    const response = await fetch(url+"tax=", {
+    const response = await fetch(`${url}tax?income=100000`, {
       method: "POST",
       headers: {
         "Authorization": "Bearer " + process.env.BEARER_TOKEN
